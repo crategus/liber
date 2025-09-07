@@ -1,0 +1,274 @@
+/* boxy.css */
+
+body {
+  color: #000000;
+  background-color: #ffffff;
+  margin-top: 2em;
+  margin-left: 5%;
+  margin-right: 5%;
+  font-family: sans-serif;
+  font-size: 1em;
+  line-height: 1.5em; }
+
+.main {
+  margin-top: 1.25em;
+  margin-left: 2.0em; }
+
+#header {
+  width: 100%;
+  border: 1px solid #d0d0d0;
+  padding-bottom: 0.25em;
+  margin-left: -0.25em;
+  padding: 0.25em;
+  background-color: #E8EAFF;
+  font-size: 1.5em; }
+
+#footer {
+  border-top: 1px solid #0070a0;
+  font-family: sans-serif;
+  font-size: 0.9em;
+  padding-top: 0.25em;
+  margin-top: 1em;
+  margin-bottom: 1em; }
+
+#version {
+  text-align: right;
+  font-size: 0.9em; }
+
+h2 {
+  color: #0070a0; }
+
+h3 {
+  width: 100%;
+  padding-bottom: 0.25em;
+  margin-left: -0.25em;
+  padding: 0.25em;
+  border: 1px solid #d0d0d0;
+  background-color: #E8EAFF; }
+
+h4 {
+  width: 100%;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 1.0em; }
+
+h5 {
+  font-weight: bold;
+  margin-top: 0.0em;
+  margin-bottom: 0.75em;
+  font-size: 1.0em; }
+
+.sph3 {
+  margin-top: 1em;
+  margin-bottom: 0.75em;
+  font-weight: bold; }
+
+.sph4 {
+  padding-top: 1em;
+  padding-bottom: 0.75em;
+  font-weight: bold; }
+
+.sph5 {
+  font-weight: bold;
+  margin-top: 0.0em;
+  margin-bottom: 0.75em;
+  font-size: 1.0em; }
+
+br {
+  margin-top: 1.0em; }
+
+div.sidebar {
+  float: right;
+  min-width: 25%;
+  padding: 0pt 5pt 5pt 5pt;
+  font-family: sans-serif; }
+
+
+a {
+  text-decoration: none;
+  color: #000000;
+  border-bottom: 1px dotted #0070a0;
+  border-top: 1px solid white;
+  border-left: 1px solid white;
+  border-right: 1px solid white;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+a:hover {
+  color: #000000;
+  border: 1px solid black;
+}
+
+.nonlink {
+  border-bottom: 1px solid white;
+  border-top: 1px solid white;
+  border-left: 1px solid white;
+  border-right: 1px solid white;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+.sidebar a {
+  border-top: 1px solid #eeeeee;
+  border-left: 1px solid #eeeeee;
+  border-right: 1px solid #eeeeee;
+}
+
+#headerlink {
+  border: none;
+}
+
+#headerlink:hover {
+  border: none;
+}
+
+.padded {
+  padding-left: 1.5em;
+  padding-right: 1.5em;
+}
+
+.padded h1,h2 {
+  margin-left: -1.5em;
+}
+
+.grau {
+  padding-top: 1em;
+}
+
+.indent {
+  margin-left: 1.5em;
+}
+
+.indent-hanging {
+  margin-left: 3.0em;
+  text-indent: -3.0em; }
+
+.noindent {
+  margin-left: -30px;
+  padding-bottom: 1em;
+}
+
+.def {
+  padding: 1px 1px 1px 1px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  margin-right: 40px;
+}
+
+.nomargin {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+dl {
+  margin-top: 1.0em;
+  margin-bottom: 1.0em; }
+
+dt {
+  margin-bottom: 0.5em; }
+
+dd {
+  margin-left: 2.0em;
+  margin-bottom: 0.5em; }
+
+.simple-table { margin-top: 0.75em;
+                margin-bottom: 0.75em; }
+.simple-table dl { margin-top: 0.0em;
+                   margin-bottom: 0.0em; }
+.simple-table dt { margin-top: 0.25em;
+                   margin-bottom: 0.0em; }
+.simple-table dd { margin-left: 1.5em;
+                   margin-bottom: 0.0em; }
+
+pre {
+  background-color: #eeeeee;
+  border: solid 1px #d0d0d0;
+  padding: 1em;
+  line-height: normal; }
+
+#sp-package-list {
+  /* ... */
+}
+
+#sp-about-packages {
+  /* ... */
+}
+
+.sp-lambda-list {
+  width: 90%;
+  border: solid 1px #d0d0d0;
+  background-color: #f4f4f4;
+  padding: 0.5em 0.5em 0.5em 0.5em;
+  margin-top: 1em;
+  font-weight: bold;
+}
+
+.sp-definition {
+  width: 90%;
+  /* no top border */
+  border-left: 1px solid #d0d0d0;
+  border-right: 1px solid #d0d0d0;
+  border-bottom: 1px solid #d0d0d0;
+  padding: 0.5em 0.5em 0.5em 0.5em; }
+
+.sp-definition-body {
+  padding-left: 2em;
+  padding-right: 2em;
+  padding-bottom: 0em; }
+
+.sp-definition-body ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.sp-return {
+}
+
+.arg {
+  font-family: monospace;
+  font-style: italic;
+  font-size: 1.1em;
+  white-space: nowrap }
+
+.sym {
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 1.1em;
+  white-space: nowrap; }
+
+.code {
+  font-family: monospace;
+  font-size: 1.1em; }
+
+.kbd {
+  font-family: monospace;
+  font-size: 1.1em; }
+
+.syntax {
+  font-family: monospace;
+  font-size: 1.1em; }
+
+.term {
+/*  color: blue; */
+  font-style: italic;
+  font-size: 100% }
+
+.defterm {
+/*  color: blue; */
+  font-weight: bold;
+  font-style: italic;
+  font-size: 100% }
+
+/* list of slot access functions should not have a disc,
+   we need a second definition for this case  */
+ul {
+  list-style: none; }
+
+/* class für unordered list with a disc and margins */
+ul.disc {
+  list-style-type: disc;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em; }
+
+.table-entry { }
