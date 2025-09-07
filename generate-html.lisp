@@ -18,6 +18,8 @@
   (liber:generate-html-documentation
       '(:liber)
       output-directory
+      :author "Crategus"
+      :author-url "http://www.crategus.com"
       :index-title "Liber API documentation"
       :heading "Liber"
       :css "default.css"
@@ -32,6 +34,8 @@
   (liber:generate-html-documentation
       '(:liber)
       output-directory
+      :author "Crategus"
+      :author-url "http://www.crategus.com"
       :index-title "Liber API documentation"
       :heading "Liber"
       :css "default.css"
