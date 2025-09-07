@@ -40,16 +40,18 @@
            #:liber))
 
 (setf (documentation (find-package :liber) t)
- "@version{2025-09-06}
+ "@version{2025-09-07}
   The Liber library is a  HTML documentation generation tool for Common Lisp
   packages. It extracts documentation strings written in a custom markup
   language and generates either multiple HTML pages or a single HTML page for
-  the documentation.
+  the documentation. The source code for the Liber library is available on
+  @url[https://github.com/crategus/liber]{github}.
 
-  The Liber library is a forck of the @url[http://www.lichteblau.com/atdoc/]{atdoc}
-  library written by David Lichteblau. It is developped using SBCL on Ubuntu.
-  The library runs sucessfully on Windows. The Liber library is licensed under
-  the MIT license.
+  Liber is developed using SBCL on Ubuntu. The library runs successfully on
+  Windows. The Liber library is licensed under the MIT license.
+
+  Liber is a forck of the @url[http://www.lichteblau.com/atdoc/]{atdoc} library
+  written by David Lichteblau.
   @begin[Overview]{section}
     @subheading{Author}
     Copyright (C) 2006 - 2008 David Lichteblau @br{}
@@ -60,8 +62,8 @@
     @url[http://www.crategus.com/books/liber/index.html]{Liber API documentation}.
 
     @subheading{Download}
-    Get the source code of the Liber library at
-    @url[github]{https://github.com/crategus/liber}.
+    The source code for the Liber library is available on
+    @url[https://github.com/crategus/liber]{github}.
 
     @subheading{Installation}
     The Liber library is ASDF-installable:
