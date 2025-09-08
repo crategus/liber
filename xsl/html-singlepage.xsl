@@ -247,16 +247,11 @@
   <xsl:template name="definition">
     <xsl:param name="label"/>
     <div id="{@id}" class="sp-lambda-list">
-
       <xsl:value-of select="@kindname"/>
       <xsl:text> </xsl:text>
-
-      <!-- Get the package, @package does not work -->
-<!--      <xsl:value-of select="../../@name"/> -->
       <xsl:value-of select="@package"/>
       <xsl:text>:</xsl:text>
       <xsl:value-of select="@name"/>
-
       <xsl:if test="lambda-list">
         <xsl:text> (</xsl:text>
         <xsl:for-each select="lambda-list/elt">

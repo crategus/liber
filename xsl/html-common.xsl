@@ -12,11 +12,7 @@
     <xsl:param name="packagep"/>
     <simple-table>
       <xsl:apply-templates mode="symbol-index">
-
-<!--        <xsl:sort select="@name" data-type="text" order="ascending"/> -->
-
         <xsl:sort select="@sortid" data-type="text" order="ascending"/>
-
         <xsl:with-param name="packagep" select="$packagep"/>
       </xsl:apply-templates>
     </simple-table>
