@@ -45,10 +45,10 @@
   packages. It extracts documentation strings written in a custom markup
   language and generates either multiple HTML pages or a single HTML page for
   the documentation. The source code for the Liber library is available on
-  @url[https://github.com/crategus/liber]{github}.
+  @url[https://github.com/crategus/liber]{GitHub}.
 
   Liber is developed using SBCL on Ubuntu. The library runs successfully on
-  Windows. The Liber library is licensed under the MIT license.
+  Windows. Liber is licensed under the MIT license.
 
   Liber is a forck of the @url[http://www.lichteblau.com/atdoc/]{atdoc} library
   written by David Lichteblau.
@@ -63,7 +63,7 @@
 
     @subheading{Download}
     The source code for the Liber library is available on
-    @url[https://github.com/crategus/liber]{github}.
+    @url[https://github.com/crategus/liber]{GitHub}.
 
     @subheading{Installation}
     The Liber library is ASDF-installable:
