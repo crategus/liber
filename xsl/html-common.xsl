@@ -4,6 +4,12 @@
                 xmlns:macro="http://crategus.com/macro"
                 version="1.0">
 
+  <xsl:template match="version">
+    <div id="version">
+      <xsl:apply-templates/>
+    </div>
+  </xsl:template>
+
   <!-- Symbol index -->
 
   <xsl:template match="*" mode="symbol-index"/>

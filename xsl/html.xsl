@@ -90,10 +90,9 @@
   </xsl:template>
 
   <xsl:template name="configuration-attributes">
-    <macro:copy-attribute name="logo" path="documentation"/>
     <macro:copy-attribute name="css" path="documentation"/>
     <macro:copy-attribute name="heading" path="documentation"/>
-    <macro:copy-attribute name="ico" path="documentation"/>
+    <macro:copy-attribute name="icon" path="documentation"/>
   </xsl:template>
 
   <!--
@@ -1883,12 +1882,6 @@
   <xsl:template match="supertypes">
     <h3>Supertypes</h3>
     <div class="indent">
-      <xsl:apply-templates/>
-    </div>
-  </xsl:template>
-
-  <xsl:template match="version">
-    <div id="version">
       <xsl:apply-templates/>
     </div>
   </xsl:template>
