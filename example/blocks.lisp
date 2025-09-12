@@ -201,7 +201,7 @@
 (defclass table (load-bearing-block) ())
 
 (setf (documentation 'table 'type)
- "@version{2025-06}
+ "@version{2025-09-06}
   @short{The table supporting the rest of the world.}
   The entire rest of the world sits on this table. The table itself cannot be
   moved. For each world, this class is meant to be a singleton.
