@@ -14,7 +14,6 @@
   <xsl:key name="about-symbol"      match="about-symbol"      use="@id"/>
   <xsl:key name="about-type"        match="about-type"        use="@id"/>
   <xsl:key name="about-variable"    match="about-variable"    use="@id"/>
-
   <xsl:key name="about-function"    match="about-function"    use="@id"/>
   <xsl:key name="about-generic"     match="about-generic"     use="@id"/>
   <xsl:key name="about-operator"    match="about-operator"    use="@id"/>
@@ -23,6 +22,7 @@
   <xsl:key name="about-struct"      match="about-struct"      use="@id"/>
   <xsl:key name="about-condition"   match="about-condition"   use="@id"/>
 
+<!--
   <xsl:key name="id"
            match="symbol-definition |
                   type-definition |
@@ -38,67 +38,68 @@
                   built-in-class-definition |
                   condition-class-definition"
            use="@id"/>
+-->
+
+  <xsl:key name="id" match="symbol-definition"          use="@id"/>
+  <xsl:key name="id" match="type-definition"            use="@id"/>
+  <xsl:key name="id" match="variable-definition"        use="@id"/>
+  <xsl:key name="id" match="function-definition"        use="@id"/>
+  <xsl:key name="id" match="generic-definition"         use="@id"/>
+  <xsl:key name="id" match="operator-definition"        use="@id"/>
+  <xsl:key name="id" match="macro-definition"           use="@id"/>
+
+  <xsl:key name="id" match="standard-class-definition"  use="@id"/>
+  <xsl:key name="id" match="system-class-definition"    use="@id"/>
+  <xsl:key name="id" match="structure-class-definition" use="@id"/>
+  <xsl:key name="id" match="built-in-class-definition"  use="@id"/>
+  <xsl:key name="id" match="condition-class-definition" use="@id"/>
+  <xsl:key name="id" match="gobject-class-definition"   use="@id"/>
 
 <!--
   <xsl:key name="symbol-by-name"
            match="symbol-definition"
            use="@name"/>
--->
 
-  <xsl:key name="symbol-by-name"
-           match="symbol-definition"
-           use="@id"/>
-
-  <xsl:key name="type-by-name"
-           match="type-definition"
-           use="@id"/>
-  <xsl:key name="variable-by-name"
-           match="variable-definition"
-           use="@id"/>
-
-  <xsl:key name="function-by-name"
-           match="function-definition"
-           use="@id"/>
-
-  <xsl:key name="generic-by-name"
-           match="generic-definition"
-           use="@id"/>
-  <xsl:key name="operator-by-name"
-           match="operator-definition"
-           use="@id"/>
-  <xsl:key name="macro-by-name"
-           match="macro-definition"
+  <xsl:key name="standard-class-by-name"
+           match="standard-class-definition|type-definition"
            use="@id"/>
 
   <xsl:key name="standard-class-by-name"
            match="gobject-class-definition|type-definition"
            use="@id"/>
+-->
+
+  <!-- We need this key definition. Why? What is wrong? -->
   <xsl:key name="standard-class-by-name"
-           match="standard-class-definition|type-definition"
+           match="gobject-class-definition"
            use="@id"/>
-  <xsl:key name="system-class-by-name"
-           match="system-class-definition"
-           use="@id"/>
-  <xsl:key name="structure-class-by-name"
-           match="structure-class-definition"
-           use="@id"/>
-  <xsl:key name="built-in-class-by-name"
-           match="built-in-class-definition"
-           use="@id"/>
-  <xsl:key name="condition-class-by-name"
-           match="condition-class-definition"
-           use="@id"/>
+
+  <xsl:key name="symbol-by-name"   match="symbol-definition"   use="@id"/>
+  <xsl:key name="type-by-name"     match="type-definition"     use="@id"/>
+  <xsl:key name="variable-by-name" match="variable-definition" use="@id"/>
+  <xsl:key name="function-by-name" match="function-definition" use="@id"/>
+  <xsl:key name="generic-by-name"  match="generic-definition"  use="@id"/>
+  <xsl:key name="operator-by-name" match="operator-definition" use="@id"/>
+  <xsl:key name="macro-by-name"    match="macro-definition"    use="@id"/>
+
+  <xsl:key name="standard-class-by-name"  match="standard-class-definition"  use="@id"/>
+  <xsl:key name="system-class-by-name"    match="system-class-definition"    use="@id"/>
+  <xsl:key name="structure-class-by-name" match="structure-class-definition" use="@id"/>
+  <xsl:key name="built-in-class-by-name"  match="built-in-class-definition"  use="@id"/>
+  <xsl:key name="condition-class-by-name" match="condition-class-definition" use="@id"/>
+  <xsl:key name="gobject-class-by-name"   match="gobject-class-definition"   use="@id"/>
+
 
   <xsl:template match="/">
     <pages>
       <xsl:call-template name="copy-base-uri"/>
-      <macro:copy-attribute name="logo" path="documentation"/>
       <macro:copy-attribute name="css" path="documentation"/>
       <macro:copy-attribute name="heading" path="documentation"/>
-      <macro:copy-attribute name="ico" path="documentation"/>
+      <macro:copy-attribute name="icon" path="documentation"/>
       <xsl:apply-templates select="documentation"/>
     </pages>
   </xsl:template>
+
 
 <!-- Main template for the documentation -->
   <xsl:template match="documentation">
@@ -360,9 +361,7 @@
         <xsl:apply-templates select="syntax"/>
         <xsl:apply-templates select="arguments"/>
         <xsl:call-template name="main-documentation-string"/>
-        <div id="version">
-          <xsl:apply-templates select="version"/>
-        </div>
+        <xsl:apply-templates select="version"/>
       </div>
     </div>
   </xsl:template>
@@ -854,9 +853,7 @@
         <xsl:apply-templates select="syntax"/>
         <xsl:apply-templates select="supertypes"/>
         <xsl:call-template name="main-documentation-string"/>
-        <div id="version">
-          <xsl:apply-templates select="version"/>
-        </div>
+        <xsl:apply-templates select="version"/>
       </div>
     </div>
   </xsl:template>
@@ -870,9 +867,7 @@
         <xsl:apply-templates select="variable-type"/>
         <xsl:apply-templates select="variable-value"/>
         <xsl:call-template name="main-documentation-string"/>
-        <div id="version">
-          <xsl:apply-templates select="version"/>
-        </div>
+        <xsl:apply-templates select="version"/>
       </div>
     </div>
   </xsl:template>
@@ -892,9 +887,7 @@
           </div>
         </xsl:if>
         <xsl:call-template name="main-documentation-string"/>
-        <div id="version">
-          <xsl:apply-templates select="version"/>
-        </div>
+        <xsl:apply-templates select="version"/>
       </div>
     </div>
   </xsl:template>
@@ -914,9 +907,7 @@
           </div>
         </xsl:if>
         <xsl:call-template name="main-documentation-string"/>
-        <div id="version">
-          <xsl:apply-templates select="version"/>
-        </div>
+        <xsl:apply-templates select="version"/>
       </div>
     </div>
   </xsl:template>
@@ -936,9 +927,7 @@
           </div>
         </xsl:if>
         <xsl:call-template name="main-documentation-string"/>
-        <div id="version">
-          <xsl:apply-templates select="version"/>
-        </div>
+        <xsl:apply-templates select="version"/>
       </div>
     </div>
   </xsl:template>
@@ -958,9 +947,7 @@
           </div>
         </xsl:if>
         <xsl:call-template name="main-documentation-string"/>
-        <div id="version">
-          <xsl:apply-templates select="version"/>
-        </div>
+        <xsl:apply-templates select="version"/>
       </div>
     </div>
   </xsl:template>
@@ -1009,9 +996,7 @@
             </xsl:choose>
         </xsl:if>
         <xsl:call-template name="main-documentation-string"/>
-        <div id="version">
-          <xsl:apply-templates select="version"/>
-        </div>
+        <xsl:apply-templates select="version"/>
       </div>
     </div>
   </xsl:template>
@@ -1032,9 +1017,7 @@
             <xsl:apply-templates select="valid-context"/>
             <xsl:apply-templates select="binding-types"/>
             <xsl:call-template name="main-documentation-string"/>
-            <div id="version">
-              <xsl:apply-templates select="version"/>
-            </div>
+            <xsl:apply-templates select="version"/>
           </div>
         </div>
       </xsl:when>
@@ -1082,9 +1065,7 @@
               </xsl:choose>
             </xsl:if>
             <xsl:call-template name="main-documentation-string"/>
-            <div id="version">
-              <xsl:apply-templates select="version"/>
-            </div>
+            <xsl:apply-templates select="version"/>
           </div>
         </div>
       </xsl:otherwise>
@@ -1134,9 +1115,7 @@
 
         </xsl:if>
         <xsl:call-template name="main-documentation-string"/>
-        <div id="version">
-          <xsl:apply-templates select="version"/>
-        </div>
+        <xsl:apply-templates select="version"/>
       </div>
     </div>
   </xsl:template>
@@ -1157,9 +1136,7 @@
             <xsl:apply-templates select="valid-context"/>
             <xsl:apply-templates select="binding-types"/>
             <xsl:call-template name="main-documentation-string"/>
-            <div id="version">
-              <xsl:apply-templates select="version"/>
-            </div>
+            <xsl:apply-templates select="version"/>
           </div>
         </div>
       </xsl:when>
@@ -1205,9 +1182,7 @@
               </xsl:choose>
             </xsl:if>
             <xsl:call-template name="main-documentation-string"/>
-            <div id="version">
-              <xsl:apply-templates select="version"/>
-            </div>
+            <xsl:apply-templates select="version"/>
           </div>
         </div>
       </xsl:otherwise>
@@ -1257,9 +1232,7 @@
 
         </xsl:if>
         <xsl:call-template name="main-documentation-string"/>
-        <div id="version">
-          <xsl:apply-templates select="version"/>
-        </div>
+        <xsl:apply-templates select="version"/>
       </div>
     </div>
   </xsl:template>
@@ -1307,9 +1280,7 @@
 
         </xsl:if>
         <xsl:call-template name="main-documentation-string"/>
-        <div id="version">
-          <xsl:apply-templates select="version"/>
-        </div>
+        <xsl:apply-templates select="version"/>
       </div>
     </div>
   </xsl:template>
