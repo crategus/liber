@@ -25,6 +25,52 @@
 
 (in-package :liber)
 
+(defvar *stat*)
+
+(defstruct statistic
+  (external-symbols 0 :type integer)
+  (internal-symbols 0 :type integer)
+  (variables nil)
+  (macros nil)
+  (operators nil)
+  (generics nil)
+  (functions nil)
+  (classes nil)
+  (types nil)
+  (symbols nil))
+
+(defun sum-of-symbols (instance)
+  (+ (length (statistic-variables instance))
+     (length (statistic-macros instance))
+     (length (statistic-operators instance))
+     (length (statistic-generics instance))
+     (length (statistic-functions instance))
+     (length (statistic-classes instance))
+     (length (statistic-types instance))
+     (length (statistic-symbols instance))))
+
+(defun lookup (key &optional (instance *stat*))
+  (cond ((eq key :variables)
+         (statistic-variables instance))
+        ((eq key :macros)
+         (statistic-macros instance))
+        ((eq key :operators)
+         (statistic-operators instance))
+        ((eq key :generics)
+         (statistic-generics instance))
+        ((eq key :functions)
+         (statistic-functions instance))
+        ((eq key :classes)
+         (statistic-classes instance))
+        ((eq key :types)
+         (statistic-types instance))
+        ((eq key :symbols)
+         (statistic-symbols instance))
+        (t
+         (format t "LOOKUP: Unknown type ~a~%" type))))
+
+;;; ----------------------------------------------------------------------------
+
 (let ((external-symbols (make-hash-table)))
   ;; Sets documentation string for external symbol
   (defun (setf symbol-documentation) (docstring symbol)
@@ -162,9 +208,9 @@
                            :if-exists if-exists
                            :element-type '(unsigned-byte 8))
       (let ((buf (make-array #x2000 :element-type '(unsigned-byte 8))))
-        (loop for pos = (read-sequence buf in)
-              until (zerop pos)
-              do (write-sequence buf out :end pos))))))
+        (iter (for pos = (read-sequence buf in))
+              (until (zerop pos))
+              (write-sequence buf out :end pos))))))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -207,21 +253,19 @@
 (defun grovel-stylesheet-dependencies (namestring)
   (let ((dependencies '()))
     (klacks:with-open-source (source (cxml:make-source (pathname namestring)))
-      (loop
-        for event = (klacks:peek-next source)
-        while event
-        do
-        (when (and (eq event :start-element)
-                   (equal (klacks:current-uri source)
-                          "http://www.w3.org/1999/XSL/Transform")
-                   (or (equal (klacks:current-lname source) "import")
-                       (equal (klacks:current-lname source) "include")))
-          (push (make-pathname :type "xsl"
-                               :defaults
-                               (merge-pathnames
-                                   (klacks:get-attribute source "href")
-                                   namestring))
-                dependencies))))
+      (iter (for event = (klacks:peek-next source))
+            (while event)
+            (when (and (eq event :start-element)
+                       (string= (klacks:current-uri source)
+                                "http://www.w3.org/1999/XSL/Transform")
+                       (or (string= (klacks:current-lname source) "import")
+                           (string= (klacks:current-lname source) "include")))
+              (push (make-pathname :type "xsl"
+                                   :defaults
+                                   (merge-pathnames
+                                       (klacks:get-attribute source "href")
+                                       namestring))
+                    dependencies))))
     dependencies))
 
 (defun find-stylesheet (namestring)
@@ -258,14 +302,15 @@
     (car cache-entry)))
 
 (defun apply-stylesheet-chain (input stylesheets output)
-  (iter
-    (for input-designator first (pathname (magic-namestring input)) then result)
-    (for (current-stylesheet . rest) on stylesheets)
-    (for output-designator = (if rest nil (pathname (magic-namestring output))))
-    (for result = (xuriella:apply-stylesheet
-                      (find-stylesheet (magic-namestring current-stylesheet))
-                      input-designator
-                      :output output-designator))))
+  (let ((input (pathname (magic-namestring input)))
+        (output (pathname (magic-namestring output))))
+    (iter (for input-designator first input then result)
+          (for (stylesheet . rest) on stylesheets)
+          (for output-designator = (if rest nil output))
+          (for result = (xuriella:apply-stylesheet
+                            (find-stylesheet (magic-namestring stylesheet))
+                            input-designator
+                            :output output-designator)))))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -303,29 +348,29 @@
                        :if-exists :rename-and-delete)
       (cxml:with-xml-output (cxml:make-octet-stream-sink s)
         (cxml:with-element "documentation"
-          (loop for (key value) on keys :by #'cddr
-                do (when value
-                     (cxml:attribute
-                       (format nil "~a" (string-downcase key))
-                       value)))
+          (iter (for (key value) on keys :by #'cddr)
+                (when value
+                  (cxml:attribute (format nil "~a" (string-downcase key))
+                                  value)))
           (dolist (package packages)
             (format t "Extract documentation : ~a~%" package)
             (let ((*package* package))
               (emit-package package packages))))))))
 
 (defun generate-html-documentation
-    (packages directory &key (author nil)
-                             (author-url nil)
-                             (date (get-date))
-                             (index-title "No Title")
-                             (heading "No Heading")
-                             (css "default.css")
-                             (icon "lambda.icon")
-                             (single-page-p nil)
-                             (paginate-section-p nil)
-                             (include-slot-definitions-p nil)
-                             (include-internal-symbols-p nil))
- "@version{2025-09-06}
+       (packages directory &key (author nil)
+                                (author-url nil)
+                                (date (get-date))
+                                (index-title "No Title")
+                                (heading "No Heading")
+                                (css "default.css")
+                                (icon "lambda.icon")
+                                (single-page-p nil)
+                                (paginate-section-p nil)
+                                (include-slot-definitions-p nil)
+                                (include-internal-symbols-p nil)
+                                (delete-tmp-files-p t))
+ "@version{2025-09-12}
   @argument[packages]{list of package designators, documentation will be
     generated for these packages}
   @argument[directory]{a pathname specifying a directory, all output files and
@@ -367,6 +412,7 @@
   (ensure-directories-exist directory)
   (unless single-page-p
     (ensure-directories-exist (merge-pathnames "figures/" directory)))
+  (setf *stat* (make-instance 'statistic))
   ;; Extract documentation
   (extract-documentation packages
                          directory
@@ -395,6 +441,23 @@
                    (merge-pathnames "figures/"
                                     (file-namestring figure))
                    :if-exists :rename-and-delete)))
+    ;; Print statistics on the console
+    (format t "-----------------------------------~%")
+    (format t "Statistics about the documentation:~%")
+    (format t "   External Symbols : ~a~%" (statistic-external-symbols *stat*))
+    (format t "   Internal Symbols : ~a~%" (statistic-internal-symbols *stat*))
+    (format t "~%")
+    (format t "   Variables    : ~a~%" (length (statistic-variables *stat*)))
+    (format t "   Macros       : ~a~%" (length (statistic-macros *stat*)))
+    (format t "   Operators    : ~a~%" (length (statistic-operators *stat*)))
+    (format t "   Generics     : ~a~%" (length (statistic-generics *stat*)))
+    (format t "   Functions    : ~a~%" (length (statistic-functions *stat*)))
+    (format t "   Classes      : ~a~%" (length (statistic-classes *stat*)))
+    (format t "   Types        : ~a~%" (length (statistic-types *stat*)))
+    (format t "   Symbols      : ~a~%" (length (statistic-symbols *stat*)))
+    (format t "~%")
+    (format t "   Sum of Symbols   : ~a~%" (sum-of-symbols *stat*))
+    (format t "-----------------------------------~%")
     ;; Apply stylesheets to documentation
     (apply-stylesheet-chain ".liber.xml"
                             (list "cleanup.xsl")
@@ -408,12 +471,13 @@
                             (list "paginate.xsl")
                             (merge-pathnames "index.html"))
     ;; Cleanup tmp files
-    (when (probe-file (merge-pathnames directory ".liber.xml"))
-      (delete-file (merge-pathnames directory ".liber.xml")))
-    (when (probe-file (merge-pathnames directory ".liber-html.xml"))
-      (delete-file (merge-pathnames directory ".liber-html.xml")))
-    (when (probe-file (merge-pathnames directory ".liber-cleanup.xml"))
-      (delete-file (merge-pathnames directory ".liber-cleanup.xml")))))
+    (when delete-tmp-files-p
+      (when (probe-file (merge-pathnames directory ".liber.xml"))
+        (delete-file (merge-pathnames directory ".liber.xml")))
+      (when (probe-file (merge-pathnames directory ".liber-html.xml"))
+        (delete-file (merge-pathnames directory ".liber-html.xml")))
+      (when (probe-file (merge-pathnames directory ".liber-cleanup.xml"))
+        (delete-file (merge-pathnames directory ".liber-cleanup.xml"))))))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -466,10 +530,10 @@
 (defun internalp (symbol package other-packages)
   "Check whether SYMBOL is internal to some package, but not external
    to any other documented package."
-  (and (loop for package in (cons package other-packages)
-             thereis (eq (symbol-status symbol package) :internal))
-       (loop for package in (cons package other-packages)
-             never (eq (symbol-status symbol package) :external))))
+  (and (iter (for package1 in (cons package other-packages))
+             (thereis (eq (symbol-status symbol package1) :internal)))
+       (iter (for package1 in (cons package other-packages))
+             (never (eq (symbol-status symbol package1) :external)))))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -496,7 +560,6 @@
      (current-package :initarg :current-package
                       :initform nil
                       :accessor current-package)
-
      (current-name :initarg :current-name
                    :initform nil
                    :accessor current-name)
@@ -523,40 +586,41 @@
       ;; Emit external symbols
       (cxml:with-element "external-symbols"
         (do-external-symbols (symbol package)
-;          (format t "~%EXTERNAL SYMBOL : ~a~%" symbol)
+          (incf (statistic-external-symbols *stat*))
           (handle-symbol symbol package other-packages)))
       ;; Emit internal symbols
       (when *include-internal-symbols-p*
         (cxml:with-element "internal-symbols"
           (do-symbols (symbol package)
             (when (internalp symbol package other-packages)
+              (incf (statistic-internal-symbols *stat*))
               (handle-symbol symbol package other-packages))))))))
 
 (defun handle-symbol (symbol package other-packages)
   (when (boundp symbol)
-    (emit-variable symbol package))
+    (emit-variable symbol package))                    ; 1. Variable
   (when (fboundp symbol)
     (cond ((macro-function symbol)
-           (emit-macro symbol package))
+           (emit-macro symbol package))                ; 2. Macro
           ((special-operator-p symbol)
-           (emit-operator symbol package))
+           (emit-operator symbol package))             ; 3. Special Operator
           ((typep (symbol-function symbol) 'generic-function)
-           (emit-generic-function symbol package))
+           (emit-generic-function symbol package))     ; 4. Generic Function
           (t
-           (emit-function symbol package))))
+           (emit-function symbol package))))           ; 5. Function
   (when (find-class symbol nil)
-    (emit-class symbol package other-packages))
+    (emit-class symbol package other-packages))        ; 6. Class
   ;; FIXME: Handle a type specifier: This is not correct for a type specifier
   ;; that has no documentation string.
   (when (and (documentation symbol 'type)
              (not (find-class symbol nil)))
-    (emit-type symbol package))
+    (emit-type symbol package))                        ; 7. Type
   (when (or (symbol-documentation symbol)
             (and (not (boundp symbol))
                  (not (fboundp symbol))
                  (not (find-class symbol nil))
                  (not (documentation symbol 'type))))
-    (emit-symbol symbol package)))
+    (emit-symbol symbol package)))                     ; 8. Symbol
 
 ;; <symbol-definition id="gtk_sym_gtk-response-type"
 ;;                    name="gtk-response-type"
@@ -573,6 +637,7 @@
          (name (string-downcase (symbol-name symbol)))
          (packagename (string-downcase (package-name package)))
          (sortid (format nil "~a-~a" packagename name)))
+    (push symbol (statistic-symbols *stat*))
     ;; Emit symbol definition
     (cxml:with-element "symbol-definition"
       ;; Emit attributes
@@ -599,6 +664,7 @@
          (name (string-downcase (symbol-name symbol)))
          (packagename (string-downcase (package-name package)))
          (sortid (format nil "~a-~a" packagename name)))
+    (push symbol (statistic-variables *stat*))
     ;; Emit variable definition
     (cxml:with-element "variable-definition"
       ;; Emit attributes
@@ -625,6 +691,7 @@
          (name (string-downcase (symbol-name symbol)))
          (packagename (string-downcase (package-name package)))
          (sortid (format nil "~a-~a" packagename name)))
+    (push symbol (statistic-functions *stat*))
     ;; Emit function definition
     (cxml:with-element "function-definition"
       ;; Emit attributes
@@ -659,6 +726,7 @@
          (name (string-downcase (symbol-name symbol)))
          (packagename (string-downcase (package-name package)))
          (sortid (format nil "~a-~a" packagename name)))
+    (push symbol (statistic-generics *stat*))
     ;; Emit generic function definition
     (cxml:with-element "generic-definition"
       ;; Emit attributes
@@ -694,6 +762,7 @@
          (name (string-downcase (symbol-name symbol)))
          (packagename (string-downcase (package-name package)))
          (sortid (format nil "~a-~a" packagename name)))
+    (push symbol (statistic-operators *stat*))
     ;; Emit special operator definition
     (cxml:with-element "operator-definition"
       ;; Emit attributes
@@ -729,6 +798,7 @@
          (name (string-downcase (symbol-name symbol)))
          (packagename (string-downcase (package-name package)))
          (sortid (format nil "~a-~a" packagename name)))
+    (push symbol (statistic-macros *stat*))
     ;; Emit macro definition
     (cxml:with-element "macro-definition"
       ;; Emit attributes
@@ -763,6 +833,7 @@
          (name (string-downcase (symbol-name symbol)))
          (packagename (string-downcase (package-name package)))
          (sortid (format nil "~a-~a" packagename name)))
+    (push symbol (statistic-types *stat*))
     ;; Emit type definition
     (cxml:with-element "type-definition"
       ;; Emit attributes
@@ -927,6 +998,7 @@
          ;; FIXME: Does this work well for a class of type condition
          ;; and for a built in class !?
          (ctype (string-downcase (symbol-name (type-of class)))))
+    (push symbol (statistic-classes *stat*))
     ;; Emit class definition
     (cxml:with-element (format nil "~a-definition" ctype)
       ;; Emit attributes
@@ -1006,39 +1078,39 @@
 (defun characters (handler str)
   (let ((lines (coerce (split-sequence:split-sequence #\newline str) 'vector))
         (skip nil))
-    ;; Handle the first line
+    ;; Handle first line
     (sax:characters handler (elt lines 0))
     ;; Handle more lines
-    ;; FIXME: This seems to be not very Lispy
     (when (> (length lines) 1)
-      (loop for i from 1 below (1- (length lines))
-            for line = (elt lines i)
-            do (cond ((zerop (length (string-trim " " line)))
-                      (unless skip
-                        (sax:start-element handler nil "break" "break" nil)
-                        (sax:end-element handler nil "break" "break"))
-                      (setf skip t))
-                     (t
-                      (sax:characters handler (string #\newline))
-                      (sax:characters handler line)
-                      (setf skip nil))))
-      ;; Handle the last line
+      (iter (for i from 1 below (1- (length lines)))
+            (for line = (elt lines i))
+            (cond ((zerop (length (string-trim " " line)))
+                   (unless skip
+                     (sax:start-element handler nil "break" "break" nil)
+                     (sax:end-element handler nil "break" "break"))
+                   (setf skip t))
+                  (t
+                   (sax:characters handler (string #\newline))
+                   (sax:characters handler line)
+                   (setf skip nil))))
+      ;; Handle last line
       (sax:characters handler (elt lines (1- (length lines)))))))
 
 (defun read-delimited-string (handler stream bag &optional eat-limit)
   (let ((out (make-string-output-stream)))
-    (loop for c = (read-char stream nil)
-          do (when (null c)
-               (emit-error handler "Unexpected end of documentation string."))
-             (when (eql c #\@)
-               (cond ((eql (peek-char nil stream nil) #\])
-                      (write-char (read-char stream nil) out)
-                      (setq c (read-char stream nil)))))
-             (when (find c bag)
-               (unless eat-limit
-                 (unread-char c stream))
-               (return (get-output-stream-string out)))
-             (write-char c out))))
+    (iter (for c = (read-char stream nil))
+          (when (null c)
+            (emit-error handler "Unexpected end of documentation string."))
+          ;; FIXME: Improve this implementation
+          (when (eql c #\@)
+            (cond ((eql (peek-char nil stream nil) #\])
+                   (write-char (read-char stream nil) out)
+                   (setq c (read-char stream nil)))))
+          (when (find c bag)
+            (unless eat-limit
+              (unread-char c stream))
+            (return (get-output-stream-string out)))
+          (write-char c out))))
 
 (defun parse-docstring-element-section (handler stream name arg close)
   (let* ((attrs '())
@@ -1122,48 +1194,48 @@
 
 (defun parse-docstring-1 (handler stream close)
   (let ((out (make-string-output-stream)))
-    (loop for c = (read-char stream nil)
-          do (cond
-               ((null c)
-                (when close
-                  (emit-error handler "Unexpected end of documentation string."))
-                (return))
-               ((eql c #\@)
-                (cond
-                  (;; handle "@\"
-                   (eql (peek-char nil stream nil) #\})
-                   (write-char (read-char stream) out))
-                  (;; handle "@@"
-                   (eql (peek-char nil stream nil) #\@)
-                   (write-char (read-char stream) out))
-                  (;; handle "@]"
-                   (eql (peek-char nil stream nil) #\])
-                   (write-char (read-char stream) out))
-                  (t
-                   ;; At this point we have found some command like @begin.
-                   ;; First we handle all characters read to this point.
-                   (characters handler (get-output-stream-string out))
-                   ;; Now we read the command.
-                   (let ((name (read-delimited-string handler stream "[{ :")))
-                     ;; Do we have found @end{} ?
-                     (when (string= name "end")
-                       ;; Yes. Check if we have a corresponding opening tag.
-                       (read-char stream)
-                       (unless (equal (read-delimited-string handler
-                                                             stream "}" t)
-                                      close)
-                         (emit-error handler
-                           (format nil "Invalid close tag found. Expected: ~a"
-                                       close)))
-                       (return))
-                     ;; Handle the command.
-                     (parse-docstring-element handler stream name)))))
-               ((eql c #\})
-                (when (eq close t)
-                  (return))
-                (emit-error handler "Unexpected closing brace."))
-               (t
-                (write-char c out))))
+    (iter (for c = (read-char stream nil))
+          (cond ((null c)
+                 (when close
+                   (emit-error handler "Unexpected end of documentation string."))
+                 (return))
+                ((eql c #\@)
+                 (cond
+                   (;; handle "@\"
+                    (eql (peek-char nil stream nil) #\})
+                    (write-char (read-char stream) out))
+                   (;; handle "@@"
+                    (eql (peek-char nil stream nil) #\@)
+                    (write-char (read-char stream) out))
+                   (;; handle "@]"
+                    (eql (peek-char nil stream nil) #\])
+                    (write-char (read-char stream) out))
+                   (t
+                    ;; At this point we have found some command like @begin.
+                    ;; First we handle all characters read to this point.
+                    (characters handler (get-output-stream-string out))
+                    ;; Now we read the command.
+                    (let ((name (read-delimited-string handler stream "[{ :")))
+                      ;; Do we have found @end{} ?
+                      (when (string= name "end")
+                        ;; Yes. Check if we have a corresponding opening tag.
+                        (read-char stream)
+                        (unless (equal (read-delimited-string handler
+                                                              stream "}" t)
+                                       close)
+                          (emit-error handler
+                            (format nil "Invalid close tag found. Expected: ~a"
+                                        close)))
+                        (return))
+                      ;; Handle the command.
+                      (parse-docstring-element handler stream name)))))
+                ((eql c #\})
+                 (when (eq close t)
+                   (return))
+                 (emit-error handler "Unexpected closing brace."))
+                (t
+                 (write-char c out))))
+
     ;; Handle all remaining characters we have written out
     (characters handler (get-output-stream-string out))))
 
@@ -1306,12 +1378,12 @@
            (value nil)
            (id (cond ;; Handle @slot[Value]{TEXT}
                      ((string= kind "slot")
-                        (setf value (sax::standard-attribute-value attr))
-                        (make-id-for-slot name value text))
+                      (setf value (sax::standard-attribute-value attr))
+                      (make-id-for-slot name value text))
                      ;; Handle @sig[VALUE]{TEXT}
                      ((string= kind "sig")
-                        (setf value (sax::standard-attribute-value attr))
-                        (make-id-for-signal name value text))
+                      (setf value (sax::standard-attribute-value attr))
+                      (make-id-for-signal name value text))
                      ;; Handle @prop[VALUE]{TEXT}
                      ((string= kind "prop")
                       (setf value (sax::standard-attribute-value attr))
@@ -1371,15 +1443,5 @@
       (sax:characters next text)
       (setf (current-name handler) nil)))
   (call-next-method))
-
-;;; ----------------------------------------------------------------------------
-
-(setf (alias-for-symbol 'single-page-p)
-      "Keyword"
-      (symbol-documentation 'single-page-p)
- "@version{2025-09-04}
- @see-function{liber:extract-documentation}")
-
-(export 'single-page-p)
 
 ;;; --- End of file liber.lisp -------------------------------------------------

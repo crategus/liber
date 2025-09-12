@@ -37,7 +37,7 @@
            #:generate-html-documentation
            #:extract-documentation
 
-           #:liber))
+           #:lookup))
 
 (setf (documentation (find-package :liber) t)
  "@version{2025-09-07}

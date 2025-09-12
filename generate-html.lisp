@@ -25,7 +25,8 @@
       :css "default.css"
       :single-page-p t
       :include-slot-definitions-p t
-      :include-internal-symbols-p t))
+      :include-internal-symbols-p t
+      :delete-tmp-files-p t))
 
 ;; Make HTML (multiple pages)
 (let* ((base (asdf:component-pathname (asdf:find-system :liber)))
@@ -41,4 +42,5 @@
       :css "default.css"
       :single-page-p nil
       :include-slot-definitions-p t
-      :include-internal-symbols-p t))
+      :include-internal-symbols-p t
+      :delete-tmp-files-p t))
