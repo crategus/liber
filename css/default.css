@@ -165,10 +165,11 @@ dd {
   margin-bottom: 0.0em; }
 
 pre {
+  margin-right: 1.5em;
   border: solid 1px lightgray;
   background-color: whitesmoke;
   padding: 1em;
-  line-height: normal; }
+  line-height: 1.3em; }
 
 #sp-package-list {
   /* ... */
@@ -179,6 +180,7 @@ pre {
 }
 
 .sp-lambda-list {
+  margin-right: 1.5em;
   border: solid 1px lightgray;
   background-color: whitesmoke;
   padding: 0.5em 0.5em 0.5em 0.5em;
@@ -186,7 +188,7 @@ pre {
   font-weight: bold; }
 
 .sp-definition {
-  /* no top border */
+  margin-right: 1.5em;
   border-left: 1px solid lightgray;
   border-right: 1px solid lightgray;
   border-bottom: 1px solid lightgray;

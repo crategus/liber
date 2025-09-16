@@ -1,8 +1,19 @@
-/* boxy.css */
+/* boxy.css
+ *
+ * Font          : sans-serif
+ *
+ * Color palette : #98cfe3 (blue)
+ *                 #ffffff (white)
+ *                 #d0eef7 (light blue)
+ *                 #048db7 (dark blue)
+ *                 #000000 (black)
+ *
+ * https://www.color-hex.com/color-palette/1064432
+ * */
 
 body {
-  color: #000000;
-  background-color: #ffffff;
+  color: black;
+  background-color: white;
   margin-top: 2em;
   margin-left: 5%;
   margin-right: 5%;
@@ -15,16 +26,16 @@ body {
   margin-left: 2.0em; }
 
 #header {
-  width: 100%;
-  border: 1px solid #d0d0d0;
+  font-size: 1.5em;
+  font-weight: bold;
+  border: 1px solid #98cfe3;
+  background-color: #d0eef7;
   padding-bottom: 0.25em;
   margin-left: -0.25em;
-  padding: 0.25em;
-  background-color: #E8EAFF;
-  font-size: 1.5em; }
+  padding: 0.25em; }
 
 #footer {
-  border-top: 1px solid #0070a0;
+  border-top: 1px solid #98cfe3;
   font-family: sans-serif;
   font-size: 0.9em;
   padding-top: 0.25em;
@@ -36,15 +47,15 @@ body {
   font-size: 0.9em; }
 
 h2 {
-  color: #0070a0; }
+  color: #048db7; }
 
 h3 {
   width: 100%;
   padding-bottom: 0.25em;
   margin-left: -0.25em;
   padding: 0.25em;
-  border: 1px solid #d0d0d0;
-  background-color: #E8EAFF; }
+  border: 1px solid #98cfe3;
+  background-color: #d0eef7; }
 
 h4 {
   width: 100%;
@@ -85,20 +96,18 @@ div.sidebar {
 
 
 a {
+  color: black;
   text-decoration: none;
-  color: #000000;
-  border-bottom: 1px dotted #0070a0;
+  border-bottom: 1px dotted gray;
   border-top: 1px solid white;
   border-left: 1px solid white;
   border-right: 1px solid white;
   padding-top: 1px;
-  padding-bottom: 1px;
-}
+  padding-bottom: 1px; }
 
 a:hover {
-  color: #000000;
-  border: 1px solid black;
-}
+  color: black;
+  border: 1px solid gray; }
 
 .nonlink {
   border-bottom: 1px solid white;
@@ -115,14 +124,6 @@ a:hover {
   border-right: 1px solid #eeeeee;
 }
 
-#headerlink {
-  border: none;
-}
-
-#headerlink:hover {
-  border: none;
-}
-
 .padded {
   padding-left: 1.5em;
   padding-right: 1.5em;
@@ -130,10 +131,6 @@ a:hover {
 
 .padded h1,h2 {
   margin-left: -1.5em;
-}
-
-.grau {
-  padding-top: 1em;
 }
 
 .indent {
@@ -182,10 +179,11 @@ dd {
                    margin-bottom: 0.0em; }
 
 pre {
-  background-color: #eeeeee;
-  border: solid 1px #d0d0d0;
+  margin-right: 1.5em;
+  border: solid 1px lightgray;
+  background-color: whitesmoke;
   padding: 1em;
-  line-height: normal; }
+  line-height: 1.3em; }
 
 #sp-package-list {
   /* ... */
@@ -196,20 +194,18 @@ pre {
 }
 
 .sp-lambda-list {
-  width: 90%;
-  border: solid 1px #d0d0d0;
-  background-color: #f4f4f4;
+  margin-right: 1.5em;
+  border: solid 1px #98cfe3;
+  background-color: #d0eef7;
   padding: 0.5em 0.5em 0.5em 0.5em;
   margin-top: 1em;
-  font-weight: bold;
-}
+  font-weight: bold; }
 
 .sp-definition {
-  width: 90%;
-  /* no top border */
-  border-left: 1px solid #d0d0d0;
-  border-right: 1px solid #d0d0d0;
-  border-bottom: 1px solid #d0d0d0;
+  margin-right : 1.5em;
+  border-left: 1px solid #98cfe3;
+  border-right: 1px solid #98cfe3;
+  border-bottom: 1px solid #98cfe3;
   padding: 0.5em 0.5em 0.5em 0.5em; }
 
 .sp-definition-body {
@@ -219,8 +215,7 @@ pre {
 
 .sp-definition-body ul {
   margin-top: 0;
-  margin-bottom: 0;
-}
+  margin-bottom: 0; }
 
 .sp-return {
 }

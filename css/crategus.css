@@ -1,8 +1,20 @@
-/* crategus.css */
+/* crategus.css
+ *
+ * Color palette : #ad6600 (ginger)
+ *                 #e08300 (fulvous)
+ *                 #ff9e14 (orange peel)
+
+ *                 #ffb347 (pastel orange)
+ *                 #ffa500 (orange)
+ *                 #ffc87a (topaz)
+
+ *                 #ffdead (navajo white)
+ *                 #faebd7 (antique white)
+ */
 
 body {
-  color: #000000;
-  background-color: #ffffff;
+  color: black;
+  background-color: white;
   margin-top: 2em;
   margin-left: 5%;
   margin-right: 5%;
@@ -12,18 +24,17 @@ body {
 
 .main {
   margin-top: 1.25em;
-  margin-left: 2.0em;
-}
+  margin-left: 2.0em; }
 
 #header {
-  border-bottom: 1px solid #ff9900;
+  border-bottom: 1px solid orange;
   font-size: 1.5em;
-  padding-bottom: 0.25em;
-}
+  font-weight: bold;
+  padding-bottom: 0.25em; }
 
 /* Add a style for a footer for each page */
 #footer {
-  border-top: 1px solid #ff9900;
+  border-top: 1px solid orange;
   font-family: sans-serif;
   font-size: 0.9em;
   padding-top: 0.25em;
@@ -37,9 +48,9 @@ body {
 
 h3 {
   width: 100%;
-  color: #000000;
+  color: black;
   padding-bottom: 0.25em;
-  border-bottom: 1px solid #ff9900;
+  border-bottom: 1px solid orange;
 }
 
 h4 {
@@ -79,15 +90,18 @@ div.sidebar {
 }
 
 a {
+  color: black;
   text-decoration: none;
-  color: #000000;
-  border-bottom: 1px dotted black;
+  border-bottom: 1px dotted gray;
   border-top: 1px solid white;
   border-left: 1px solid white;
   border-right: 1px solid white;
   padding-top: 1px;
-  padding-bottom: 1px;
-}
+  padding-bottom: 1px; }
+
+a:hover {
+  color: black;
+  border: 1px solid gray; }
 
 .nonlink {
   border-bottom: 1px solid white;
@@ -102,19 +116,6 @@ a {
   border-top: 1px solid #eeeeee;
   border-left: 1px solid #eeeeee;
   border-right: 1px solid #eeeeee;
-}
-
-a:hover {
-  color: #000000;
-  border: 1px solid black;
-}
-
-#headerlink {
-  border: none;
-}
-
-#headerlink:hover {
-  border: none;
 }
 
 .padded {
@@ -172,10 +173,10 @@ dd {
                    margin-bottom: 0.0em; }
 
 pre {
-  background-color: #eeeeee;
-  border: solid 1px #d0d0d0;
+  background-color: floralwhite;
+  border: solid 1px antiquewhite;
   padding: 1em;
-  line-height: normal; }
+  line-height: 1.3em; }
 
 #sp-package-list {
   /* ... */
@@ -187,20 +188,19 @@ pre {
 
 /* Header for external symbol on single page */
 .sp-lambda-list {
-  width: 90%;
-  border: solid 1px #d0d0d0;
-  background-color: #eeeeee;
+  margin-right: 1.5em;
+  border: solid 1px navajowhite;
+  background-color: antiquewhite;
   padding: 0.5em 0.5em 0.5em 0.5em; /* Abstand zum Rand der Box */
   margin-top: 1em; /* Abstand zur letzten Box */
   font-weight: bold; }
 
 /* Box für die Beschreibung des externen Symbols */
 .sp-definition {
-  width: 90%;
-  /* no top border */
-  border-left: 1px solid #d0d0d0;
-  border-right: 1px solid #d0d0d0;
-  border-bottom: 1px solid #d0d0d0;
+  margin-right: 1.5em;
+  border-left: 1px solid navajowhite;
+  border-right: 1px solid navajowhite;
+  border-bottom: 1px solid navajowhite;
   padding: 0.5em 0.5em 0.5em 0.5em; }
 
 /* Das ist der Bereich mit einem kleinen Abstand zur Box der Beschreibung */
