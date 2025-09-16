@@ -1,48 +1,50 @@
-(asdf:load-system :liber)
+;;; ----------------------------------------------------------------------------
+;;; example/generate-html.lisp
+;;;
+;;; Load this file from the Lisp prompt to generate the HTML documentation for
+;;; the blocks-world examle. The documentation is stored in the 'example/doc/'
+;;; directory, which is a subdirectory of the root directory of the Liber
+;;; library. If the directory does not exist, it will be created.
+;;;
+;;; Last updated: 2025-09-15
+;;; ----------------------------------------------------------------------------
+
+(asdf:load-system :liber/generate)
 (asdf:load-system :blocks-world)
 
-(defpackage :blocks-world-documentation
-  (:use :common-lisp)
-  (:export #:generate-html
-           #:generate-html-single-page))
-
-(in-package :blocks-world-documentation)
-
 ;; Make HTML (multiple pages)
-(defun generate-html ()
-  (let* ((base (asdf:component-pathname (asdf:find-system :blocks-world)))
-         (output-directory (merge-pathnames "doc/" base)))
-    (ensure-directories-exist output-directory)
-    (liber:generate-html-documentation
+(let* ((base (asdf:component-pathname (asdf:find-system :blocks-world)))
+       (output (merge-pathnames "doc/" base)))
+  (liber:generate-html-documentation
       '(:blocks-world :blocks-world-goals)
-      output-directory
+      base
+      output
       :author "Crategus"
       :author-url "http://www.crategus.com"
       :index-title "Blocks World API documentation"
       :heading "blocks-world"
       :css "default.css"
-      :ico "lambda.icon"
       :single-page-p nil
-      :paginate-section-p nil
       :include-slot-definitions-p t
-      :include-internal-symbols-p nil)))
+      :include-internal-symbols-p nil
+      :delete-tmp-files-p t
+      :verbose t))
 
-(defun generate-html-single-page ()
-  (let* ((base (asdf:component-pathname (asdf:find-system :blocks-world)))
-         (output-directory (merge-pathnames "doc/single-page/" base)))
-    (ensure-directories-exist output-directory)
-    (liber:generate-html-documentation
+;; Make HTML (single page)
+(let* ((base (asdf:component-pathname (asdf:find-system :blocks-world)))
+       (output (merge-pathnames "doc/single-page/" base)))
+  (liber:generate-html-documentation
       '(:blocks-world :blocks-world-goals)
-      output-directory
+      base
+      output
       :author "Crategus"
       :author-url "http://www.crategus.com"
       :index-title "Blocks World API documentation"
       :heading "blocks-world"
       :css "default.css"
-      :ico "lambda.icon"
+      :icon "lambda.icon"
       :single-page-p t
       :include-slot-definitions-p t
-      :include-internal-symbols-p nil)))
-
-(generate-html)
-(generate-html-single-page)
+      :include-internal-symbols-p nil
+      :delete-tmp-files-p t
+      :verbose t))
