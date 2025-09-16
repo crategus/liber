@@ -25,6 +25,7 @@
 
 (in-package :liber)
 
+(defvar *verbose* nil)
 (defvar *stat*)
 
 (defstruct statistic
@@ -67,7 +68,7 @@
         ((eq key :symbols)
          (statistic-symbols instance))
         (t
-         (format t "LOOKUP: Unknown type ~a~%" type))))
+         (format t "LOOKUP: Unknown key ~a~%" key))))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -275,9 +276,10 @@
                           (eql (file-write-date (car dependency))
                                (cdr dependency)))
                         (cdr cache-entry)))
-      (if cache-entry
-          (format t "~&Stylesheet has changed, reloading: ~A~%" namestring)
-          (format t "~&Loading stylesheet: ~A~%" namestring))
+      (when *verbose*
+        (if cache-entry
+            (format t "~&Stylesheet has changed, reloading : ~A~%" namestring)
+            (format t "~&Loading stylesheet : ~A~%" namestring)))
       (let ((dependencies (grovel-stylesheet-dependencies namestring)))
         (dolist (dependency dependencies)
           (with-open-file (s (make-pathname :type "tmp" :defaults dependency)
@@ -317,21 +319,21 @@
 (defvar *include-slot-definitions-p* nil)
 (defvar *include-internal-symbols-p* nil)
 
-(defun extract-documentation (packages directory
+(defun extract-documentation (packages directory-out
                                        &rest keys
                                        &key include-slot-definitions-p
                                             include-internal-symbols-p
                                        &allow-other-keys)
- "@version{2025-09-06}
+ "@version{2025-09-15}
   @argument[packages]{list of package designators, documentation will be
     generated for these packages}
-  @argument[directory]{a pathname specifying a directory, the output file will
-    be written to this directory, which must already exist}
+  @argument[directory-out]{a pathname specifying a directory, the output file
+    will be written to this directory, which must already exist}
   @argument[include-slot-definitions-p]{a boolean}
   @argument[keys]{extra parameters for stylesheets}
   @begin{short}
     Extracts docstrings from @arg{packages} and writes them in XML syntax to
-    @file{.atdoc.xml} in the specified directory.
+    @file{.liber.xml} in the specified directory.
   @end{short}
   With @arg{include-slot-definitions-p}, class documentation will include a list
   of direct slots.
@@ -341,40 +343,43 @@
   (setf packages (mapcar #'find-package packages))
   (let ((*include-slot-definitions-p* include-slot-definitions-p)
         (*include-internal-symbols-p* include-internal-symbols-p))
-    (with-open-file (s (merge-pathnames ".liber.xml" directory)
-                       :element-type '(unsigned-byte 8)
-                       :direction :output
-                       :if-does-not-exist :create
-                       :if-exists :rename-and-delete)
-      (cxml:with-xml-output (cxml:make-octet-stream-sink s)
+    (with-open-file (stream (merge-pathnames ".liber.xml" directory-out)
+                            :element-type '(unsigned-byte 8)
+                            :direction :output
+                            :if-does-not-exist :create
+                            :if-exists :rename-and-delete)
+      (cxml:with-xml-output (cxml:make-octet-stream-sink stream)
         (cxml:with-element "documentation"
           (iter (for (key value) on keys :by #'cddr)
                 (when value
-                  (cxml:attribute (format nil "~a" (string-downcase key))
-                                  value)))
+                  (let ((attr (format nil "~a" (string-downcase key))))
+                    (cxml:attribute attr value))))
           (dolist (package packages)
-            (format t "Extract documentation : ~a~%" package)
             (let ((*package* package))
+              (when *verbose*
+                (format t "Extract documentation : ~a~%" package))
               (emit-package package packages))))))))
 
 (defun generate-html-documentation
-       (packages directory &key (author nil)
-                                (author-url nil)
-                                (date (get-date))
-                                (index-title "No Title")
-                                (heading "No Heading")
-                                (css "default.css")
-                                (icon "lambda.icon")
-                                (single-page-p nil)
-                                (paginate-section-p nil)
-                                (include-slot-definitions-p nil)
-                                (include-internal-symbols-p nil)
-                                (delete-tmp-files-p t))
+       (packages base output &key (author nil)
+                                  (author-url nil)
+                                  (date (get-date))
+                                  (index-title "No Title")
+                                  (heading "No Heading")
+                                  (css "default.css")
+                                  (icon "lambda.icon")
+                                  (single-page-p nil)
+                                  (paginate-section-p nil)
+                                  (include-slot-definitions-p nil)
+                                  (include-internal-symbols-p nil)
+                                  (delete-tmp-files-p t)
+                                  (verbose nil))
  "@version{2025-09-12}
   @argument[packages]{list of package designators, documentation will be
     generated for these packages}
-  @argument[directory]{a pathname specifying a directory, all output files and
-    temporary data will be written to this directory, which must already exist}
+  @argument[output]{a pathname specifying a directory, all output files and
+    temporary data will be written to this directory, if the directory does not
+    exist, it will be created}
   @argument[index-title]{a string for the title of the main page,
     @file{index.html}, other pages will be named according to the object they
     are documenting}
@@ -404,60 +409,96 @@
   With @arg{include-slot-definition}, class documentation will include a list
   of direct slots.
   @see-function{liber:extract-documentation}"
-  (setf include-slot-definitions-p (and include-slot-definitions-p "yes"))
-  (setf include-internal-symbols-p (and include-internal-symbols-p "yes"))
-  (setf single-page-p (and single-page-p "yes"))
-  (setf paginate-section-p (and paginate-section-p "yes"))
-  ;; Ensure directories for the generated documentation
-  (ensure-directories-exist directory)
-  (unless single-page-p
-    (ensure-directories-exist (merge-pathnames "figures/" directory)))
-  (setf *stat* (make-instance 'statistic))
-  ;; Extract documentation
-  (extract-documentation packages
-                         directory
-                         :include-slot-definitions-p include-slot-definitions-p
-                         :include-internal-symbols-p include-internal-symbols-p
-                         :single-page-p single-page-p
-                         :paginate-section-p paginate-section-p
-                         :icon icon
-                         :index-title index-title
-                         :css "index.css"
-                         :heading heading
-                         :author author
-                         :author-url author-url
-                         :date date)
-  (let ((*default-pathname-defaults* (merge-pathnames directory))
-        (figures (uiop:directory-files "figures/")))
+  (let* ((*verbose* verbose)
+         (*default-pathname-defaults* (merge-pathnames output))
+         (figures-in (merge-pathnames "doc/figures/" base))
+         (figures-out (if single-page-p
+                          (merge-pathnames "../figures/" output)
+                          (merge-pathnames "figures/" output)))
+         (figures (uiop:directory-files figures-in)))
+
+    (when *verbose*
+      (format t "~&~%")
+      (format t "-----------------------------------~%")
+      (if single-page-p
+         (format t "Generating HTML (single page)~%~%")
+         (format t "Generating HTML (multiple pages)~%~%"))
+      (format t "Directory (base) : ~a~%" base)
+      (format t " Directory (out) : ~a~%" output)
+      (format t "   Figures (in)  : ~a~&" figures-in)
+      (format t "   Figures (out) : ~a~%" figures-out)
+      (format t "-----------------------------------~%"))
+
+    ;; Ensure directory for the generated documentation
+    (ensure-directories-exist output)
+
+    ;; Copy files for the documentation
     (copy-file (magic-namestring css) "index.css"
                :if-exists :rename-and-delete)
     (copy-file (magic-namestring "lambda.icon") "lambda.icon"
                :if-exists :rename-and-delete)
-    ;; Copy figures
-    ;; TODO: Improve this, copy figures for all packages
-    (unless single-page-p
+
+    ;; TODO: Only figures from the main package are copied.
+    ;; Should we also collect the figures for other packages?!
+
+    ;; Copy figures if necessary
+    (unless (string= (namestring figures-in) (namestring figures-out))
+      (when *verbose*
+        (format t "~&")
+        (format t "Copy figures~%")
+        (format t "   ~a~%" figures)
+        (format t "-----------------------------------~%"))
+      ;; Ensure directory for the figures
+      (ensure-directories-exist figures-out)
       (dolist (figure figures)
         (copy-file figure
-                   (merge-pathnames "figures/"
+                   (merge-pathnames figures-out
                                     (file-namestring figure))
                    :if-exists :rename-and-delete)))
+
+    ;; Set flags for export as attributes
+    (setf include-slot-definitions-p (and include-slot-definitions-p "yes"))
+    (setf include-internal-symbols-p (and include-internal-symbols-p "yes"))
+    (setf single-page-p (and single-page-p "yes"))
+    (setf paginate-section-p (and paginate-section-p "yes"))
+
+    ;; Initialize global for collecting statistics
+    (setf *stat* (make-instance 'statistic))
+
+    ;; Extract documentation
+    (extract-documentation packages
+                           output
+                           :include-slot-definitions-p include-slot-definitions-p
+                           :include-internal-symbols-p include-internal-symbols-p
+                           :single-page-p single-page-p
+                           :paginate-section-p paginate-section-p
+                           :icon icon
+                           :index-title index-title
+                           :css "index.css"
+                           :heading heading
+                           :author author
+                           :author-url author-url
+                           :date date)
+
     ;; Print statistics on the console
-    (format t "-----------------------------------~%")
-    (format t "Statistics about the documentation:~%")
-    (format t "   External Symbols : ~a~%" (statistic-external-symbols *stat*))
-    (format t "   Internal Symbols : ~a~%" (statistic-internal-symbols *stat*))
-    (format t "~%")
-    (format t "   Variables    : ~a~%" (length (statistic-variables *stat*)))
-    (format t "   Macros       : ~a~%" (length (statistic-macros *stat*)))
-    (format t "   Operators    : ~a~%" (length (statistic-operators *stat*)))
-    (format t "   Generics     : ~a~%" (length (statistic-generics *stat*)))
-    (format t "   Functions    : ~a~%" (length (statistic-functions *stat*)))
-    (format t "   Classes      : ~a~%" (length (statistic-classes *stat*)))
-    (format t "   Types        : ~a~%" (length (statistic-types *stat*)))
-    (format t "   Symbols      : ~a~%" (length (statistic-symbols *stat*)))
-    (format t "~%")
-    (format t "   Sum of Symbols   : ~a~%" (sum-of-symbols *stat*))
-    (format t "-----------------------------------~%")
+    (when *verbose*
+      (format t "-----------------------------------~%")
+      (format t "Statistics about the documentation~%~%")
+      (format t "   External Symbols : ~a~%" (statistic-external-symbols *stat*))
+      (format t "   Internal Symbols : ~a~%" (statistic-internal-symbols *stat*))
+      (format t "~%")
+      (format t "   Variables    : ~a~%" (length (statistic-variables *stat*)))
+      (format t "   Macros       : ~a~%" (length (statistic-macros *stat*)))
+      (format t "   Operators    : ~a~%" (length (statistic-operators *stat*)))
+      (format t "   Generics     : ~a~%" (length (statistic-generics *stat*)))
+      (format t "   Functions    : ~a~%" (length (statistic-functions *stat*)))
+      (format t "   Classes      : ~a~%" (length (statistic-classes *stat*)))
+      (format t "   Types        : ~a~%" (length (statistic-types *stat*)))
+      (format t "   Symbols      : ~a~%" (length (statistic-symbols *stat*)))
+      (format t "~%")
+      (format t "   Sum of Symbols   : ~a~%" (sum-of-symbols *stat*))
+      (format t "-----------------------------------~%"))
+
     ;; Apply stylesheets to documentation
     (apply-stylesheet-chain ".liber.xml"
                             (list "cleanup.xsl")
@@ -472,12 +513,12 @@
                             (merge-pathnames "index.html"))
     ;; Cleanup tmp files
     (when delete-tmp-files-p
-      (when (probe-file (merge-pathnames directory ".liber.xml"))
-        (delete-file (merge-pathnames directory ".liber.xml")))
-      (when (probe-file (merge-pathnames directory ".liber-html.xml"))
-        (delete-file (merge-pathnames directory ".liber-html.xml")))
-      (when (probe-file (merge-pathnames directory ".liber-cleanup.xml"))
-        (delete-file (merge-pathnames directory ".liber-cleanup.xml"))))))
+      (when (probe-file (merge-pathnames output ".liber.xml"))
+        (delete-file (merge-pathnames output ".liber.xml")))
+      (when (probe-file (merge-pathnames output ".liber-html.xml"))
+        (delete-file (merge-pathnames output ".liber-html.xml")))
+      (when (probe-file (merge-pathnames output ".liber-cleanup.xml"))
+        (delete-file (merge-pathnames output ".liber-cleanup.xml"))))))
 
 ;;; ----------------------------------------------------------------------------
 

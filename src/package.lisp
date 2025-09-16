@@ -23,6 +23,8 @@
 ;;; DEALINGS IN THE SOFTWARE.
 ;;; ----------------------------------------------------------------------------
 
+(pushnew :liber-documentation *features*)
+
 (defpackage :liber
   (:use :iterate :common-lisp)
   (:export #:alias-for-symbol
@@ -37,7 +39,8 @@
            #:generate-html-documentation
            #:extract-documentation
 
-           #:lookup))
+           #:lookup
+           #:liber))
 
 (setf (documentation (find-package :liber) t)
  "@version{2025-09-07}

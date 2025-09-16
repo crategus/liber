@@ -47,11 +47,38 @@
     :serial t
     :components
     ((:file "package")
+     (:file "liber-generate")
+     (:file "liber-application"))))
+  :depends-on (:liber/generate
+               :cl-cffi-gtk4))
+
+(defsystem :liber/generate
+  :name "liber/generate"
+  :version "0.1.0"
+  :author "Dieter Kaiser"
+  :license "MIT"
+  :components
+  ((:module src
+    :serial t
+    :components
+    ((:file "package")
      (:file "liber-generate"))))
   :depends-on (:cxml
                :xuriella
                :closer-mop
                :split-sequence
                :iterate))
+
+(defsystem :liber/test
+  :name "liber/test"
+  :version "0.1.0"
+  :author "Dieter Kaiser"
+  :license "MIT"
+  :components
+  ((:module test
+    :serial t
+    :components
+    ((:file "test"))))
+  :depends-on (:liber/generate))
 
 ;;; --- End of file liber.asd --------------------------------------------------

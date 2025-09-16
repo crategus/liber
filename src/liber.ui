@@ -1,0 +1,662 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <object class="GtkApplicationWindow" id="liberwindow">
+    <property name="title" translatable="yes">Liber</property>
+    <property name="resizable">1</property>
+    <property name="default-width">720</property>
+    <property name="default-height">840</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkStackSwitcher">
+            <property name="stack">stack</property>
+            <property name="halign">center</property>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkStack" id="stack">
+            <property name="transition-type">crossfade</property>
+            <child>
+              <!--- Stack Page 1 --->
+              <object class="GtkStackPage">
+                <property name="name">page1</property>
+                <property name="title" translatable="yes">Configuration</property>
+                <property name="child">
+                  <object class="GtkScrolledWindow">
+                    <property name="hscrollbar-policy">never</property>
+                    <property name="min-content-height">200</property>
+                    <property name="hexpand">0</property>
+                    <property name="vexpand">1</property>
+                    <child>
+                      <object class="GtkViewport">
+                        <property name="scroll-to-focus">1</property>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="orientation">vertical</property>
+                            <property name="margin-start">60</property>
+                            <property name="margin-end">60</property>
+                            <property name="margin-top">30</property>
+                            <property name="margin-bottom">30</property>
+
+                            <!-- First Group: Directories and Files -->
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="label">Directories and Files</property>
+                                <property name="xalign">0</property>
+                                <property name="margin-bottom">10</property>
+                                <style>
+                                  <class name="title-2"/>
+                                </style>
+                              </object>
+                            </child>
+
+                            <!-- First List Box: Directores and Files -->
+                            <child>
+                              <object class="GtkListBox" id="listbox1">
+                                <property name="selection-mode">none</property>
+                                <style>
+                                  <class name="rich-list"/>
+                                  <class name="boxed-list"/>
+                                </style>
+
+                                <!-- 0. Row: ASDF -->
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <child>
+                                      <object class="GtkBox">
+                                        <child>
+                                          <object class="GtkLabel" id="asdf_label">
+                                            <property name="label" translatable="yes">ASDF</property>
+                                            <property name="xalign">0</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">false</property>
+                                            <property name="mnemonic-widget">asdf_entry</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="asdf_entry">
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">true</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+
+                                <!-- 1. Row: Main Package -->
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <child>
+                                      <object class="GtkBox">
+                                        <child>
+                                          <object class="GtkLabel" id="main_package_label">
+                                            <property name="label" translatable="yes">Main Package</property>
+                                            <property name="xalign">0</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">0</property>
+                                            <property name="mnemonic-widget">main_package_entry</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="main_package_entry">
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">1</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+
+                                <!-- 2. Row: Other Packages -->
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <child>
+                                      <object class="GtkBox">
+                                        <child>
+                                          <object class="GtkLabel" id="other_packages_label">
+                                            <property name="label" translatable="yes">Other Packages</property>
+                                            <property name="xalign">0</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">0</property>
+                                            <property name="mnemonic-widget">other_packages_entry</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="other_packages_entry">
+                                            <property name="hexpand">1</property>
+                                            <property name="halign">fill</property>
+                                            <property name="valign">center</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+
+                                <!-- 3. Row: Base directory -->
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <child>
+                                      <object class="GtkBox">
+                                        <child>
+                                          <object class="GtkLabel" id="base_directory_label">
+                                            <property name="label" translatable="yes">Base Directory</property>
+                                            <property name="xalign">0</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">0</property>
+                                            <property name="mnemonic-widget">base_directory_entry</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="base_directory_entry">
+                                            <property name="hexpand">1</property>
+                                            <property name="halign">fill</property>
+                                            <property name="valign">center</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+
+                                <!-- 4. Row: Output directory -->
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <child>
+                                      <object class="GtkBox">
+                                        <child>
+                                          <object class="GtkLabel" id="output_directory_label">
+                                            <property name="label" translatable="yes">Output Directory</property>
+                                            <property name="xalign">0</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">0</property>
+                                            <property name="mnemonic-widget">output_directory_entry</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="output_directory_entry">
+                                            <property name="hexpand">1</property>
+                                            <property name="halign">fill</property>
+                                            <property name="valign">center</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+
+                                <!-- 5. Row: CSS file -->
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <child>
+                                      <object class="GtkBox">
+                                        <child>
+                                          <object class="GtkLabel" id="css_file_label">
+                                            <property name="label" translatable="yes">CSS File</property>
+                                            <property name="xalign">0</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">0</property>
+                                            <property name="mnemonic-widget">css_file_entry</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="css_file_entry">
+                                            <property name="hexpand">1</property>
+                                            <property name="halign">fill</property>
+                                            <property name="valign">center</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+
+                                <!-- 6. Row: Icon file -->
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <child>
+                                      <object class="GtkBox">
+                                        <child>
+                                          <object class="GtkLabel" id="icon_file_label">
+                                            <property name="label" translatable="yes">Icon File</property>
+                                            <property name="xalign">0</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">0</property>
+                                            <property name="mnemonic-widget">icon_file_entry</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="icon_file_entry">
+                                            <property name="hexpand">1</property>
+                                            <property name="halign">fill</property>
+                                            <property name="valign">center</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+
+                              </object>
+                            </child>
+
+                            <!-- Horizontal GtkBox for two list boxes -->
+                            <child>
+                              <object class="GtkBox">
+                                <property name="spacing">24</property>
+                                <property name="homogeneous">1</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="orientation">vertical</property>
+
+                                    <!-- Second Group: Author, Heading, ... --->
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="margin-top">30</property>
+                                        <property name="margin-bottom">10</property>
+                                        <property name="label">Date, Author, Heading, ...</property>
+                                        <property name="xalign">0</property>
+                                        <style>
+                                          <class name="title-2"/>
+                                        </style>
+                                      </object>
+                                    </child>
+
+                                    <!-- Second List Box : Date, Author, ...  -->
+                                    <child>
+                                      <object class="GtkListBox" id="listbox2">
+                                        <property name="selection-mode">none</property>
+                                        <style>
+                                          <class name="rich-list"/>
+                                          <class name="boxed-list"/>
+                                        </style>
+
+                                        <!-- 1. Row: Date -->
+                                        <child>
+                                          <object class="GtkListBoxRow">
+                                            <child>
+                                              <object class="GtkBox">
+                                                <child>
+                                                  <object class="GtkLabel" id="date_label">
+                                                    <property name="label" translatable="yes">Date</property>
+                                                    <property name="xalign">0</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="hexpand">1</property>
+                                                    <property name="mnemonic-widget">date_entry</property>
+                                                  </object>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkEntry" id="date_entry">
+                                                    <property name="halign">end</property>
+                                                    <property name="valign">center</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+
+                                <!-- 2. Row: Author -->
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <child>
+                                      <object class="GtkBox">
+                                        <child>
+                                          <object class="GtkLabel" id="author_label">
+                                            <property name="label" translatable="yes">Author</property>
+                                            <property name="xalign">0</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">1</property>
+                                            <property name="mnemonic-widget">author_entry</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="author_entry">
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+
+                                <!-- 3. Row: Author URL -->
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <child>
+                                      <object class="GtkBox">
+                                        <child>
+                                          <object class="GtkLabel" id="author_url_label">
+                                            <property name="label" translatable="yes">Author URL</property>
+                                            <property name="xalign">0</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">1</property>
+                                            <property name="mnemonic-widget">author_url_entry</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="author_url_entry">
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+
+                                <!-- 4. Row: Heading -->
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <child>
+                                      <object class="GtkBox">
+                                        <child>
+                                          <object class="GtkLabel" id="heading_label">
+                                            <property name="label" translatable="yes">Heading</property>
+                                            <property name="xalign">0</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">1</property>
+                                            <property name="mnemonic-widget">heading_entry</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="heading_entry">
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+
+                                <!-- 5. Row: Index title -->
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <child>
+                                      <object class="GtkBox">
+                                        <child>
+                                          <object class="GtkLabel" id="index_title_label">
+                                            <property name="label" translatable="yes">Index Title</property>
+                                            <property name="xalign">0</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">1</property>
+                                            <property name="mnemonic-widget">index_title_entry</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="index_title_entry">
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+
+                              </object>
+                            </child>
+
+                            </object>
+                            </child>
+
+                            <child>
+                              <object class="GtkBox">
+                                <property name="orientation">vertical</property>
+
+                            <!-- Third Group: Flags --->
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="margin-top">30</property>
+                                <property name="margin-bottom">10</property>
+                                <property name="label">Flags</property>
+                                <property name="xalign">0</property>
+                                <style>
+                                  <class name="title-2"/>
+                                </style>
+                              </object>
+                            </child>
+
+                            <!-- Third List Box: Flags -->
+                            <child>
+                              <object class="GtkListBox" id="listbox3">
+                                <property name="selection-mode">none</property>
+                                <style>
+                                  <class name="rich-list"/>
+                                  <class name="boxed-list"/>
+                                </style>
+
+                                <!-- 1. Row: Single Page -->
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <property name="activatable">0</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <child>
+                                          <object class="GtkLabel" id="single_page_label">
+                                            <property name="label" translatable="yes">Single Page</property>
+                                            <property name="xalign">0</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">1</property>
+                                            <property name="mnemonic-widget">single_page_switch</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSwitch" id="single_page_switch">
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                            <property name="active">0</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+
+                                <!-- 2. Row: Paginate Section -->
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <property name="activatable">0</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <child>
+                                          <object class="GtkLabel" id="paginate_section_label">
+                                            <property name="label" translatable="yes">Paginate Section</property>
+                                            <property name="xalign">0</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">1</property>
+                                            <property name="mnemonic-widget">paginate_section_switch</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSwitch" id="paginate_section_switch">
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                            <property name="active">1</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+
+                                <!-- 3. Row: Include Slot Definitions -->
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <property name="activatable">0</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <child>
+                                          <object class="GtkLabel" id="include_slot_definitions_label">
+                                            <property name="label" translatable="yes">Include Slot Definitions</property>
+                                            <property name="xalign">0</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">1</property>
+                                            <property name="mnemonic-widget">include_slot_definitions_switch</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSwitch" id="include_slot_definitions_switch">
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                            <property name="active">1</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+
+                                <!-- 4. Row: Include Internal Symbols -->
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <property name="activatable">0</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <child>
+                                          <object class="GtkLabel" id="include_internal_symbols_label">
+                                            <property name="label" translatable="yes">Include Internal Symbols</property>
+                                            <property name="xalign">0</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">1</property>
+                                            <property name="mnemonic-widget">include_internal_symbols_switch</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSwitch" id="include_internal_symbols_switch">
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                            <property name="active">0</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+
+                                <!-- 5. Row: Delete Temporary Files -->
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <property name="activatable">0</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <child>
+                                          <object class="GtkLabel" id="delete_temporary_files_label">
+                                            <property name="label" translatable="yes">Delete Temporary Files</property>
+                                            <property name="xalign">0</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">1</property>
+                                            <property name="mnemonic-widget">delete_temporary_files_switch</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSwitch" id="delete_temporary_files_switch">
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                            <property name="active">1</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+
+                              </object>
+                            </child> <!-- End of third group -->
+
+                            </object>
+                            </child>
+
+                              </object>
+                            </child>
+
+<!-- ----------------------------------------------------------------------- -->
+
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkStackPage">
+                <property name="name">page2</property>
+                <property name="title" translatable="yes">Page 2</property>
+                <property name="child">
+                  <object class="GtkCheckButton">
+                    <property name="label" translatable="yes">Page 2</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                  </object>
+                </property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkStackPage">
+                <property name="name">page3</property>
+                <property name="icon-name">face-laugh-symbolic</property>
+                <property name="child">
+                  <object class="GtkSpinner">
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="spinning">1</property>
+                  </object>
+                </property>
+              </object>
+            </child>
+
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkSizeGroup">
+    <property name="mode">vertical</property>
+    <widgets>
+      <widget name="listbox2"/>
+      <widget name="listbox3"/>
+    </widgets>
+  </object>
+  <object class="GtkSizeGroup">
+    <property name="mode">horizontal</property>
+    <widgets>
+      <widget name="asdf_label"/>
+      <widget name="main_package_label"/>
+      <widget name="other_packages_label"/>
+      <widget name="base_directory_label"/>
+      <widget name="output_directory_label"/>
+      <widget name="css_file_label"/>
+      <widget name="icon_file_label"/>
+    </widgets>
+  </object>
+</interface>
