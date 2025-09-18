@@ -67,7 +67,9 @@
                :xuriella
                :closer-mop
                :split-sequence
-               :iterate))
+               :iterate
+               #-sbcl
+               :swank))
 
 (defsystem :liber/test
   :name "liber/test"
