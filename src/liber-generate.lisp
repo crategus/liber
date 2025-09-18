@@ -110,7 +110,7 @@
 
 (defun list-symbol-name-alias ()
   "List of all aliases for the name of the symbols found in the package."
-  (iter (for (key value) in-hashtable *symbol-name-alias*)
+  (iter (for (nil value) in-hashtable *symbol-name-alias*)
         (collect value)))
 
 ;;; ----------------------------------------------------------------------------
