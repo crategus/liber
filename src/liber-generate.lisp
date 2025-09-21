@@ -744,7 +744,7 @@
       (cxml:attribute "kindname" (or (alias-for-function symbol) "Function"))
       ;; Emit lambda list
       (cxml:with-element "lambda-list"
-        (dolist (arg (lambda-list (symbol-function symbol)))
+        (dolist (arg (lambda-list symbol))
           (cxml:with-element "elt"
             (cxml:text (write-to-string arg
                                         :pretty t
@@ -780,7 +780,7 @@
                                      "Generic Function"))
       ;; Emit lambda list
       (cxml:with-element "lambda-list"
-        (dolist (arg (lambda-list (symbol-function symbol)))
+        (dolist (arg (lambda-list symbol))
           (cxml:with-element "elt"
             (cxml:text (write-to-string arg
                                         :pretty t
@@ -816,7 +816,7 @@
                       (or (alias-for-function symbol) "Special Operator"))
       ;; Emit lambda list
       (cxml:with-element "lambda-list"
-        (dolist (arg (lambda-list (symbol-function symbol)))
+        (dolist (arg (lambda-list symbol))
           (cxml:with-element "elt"
             (cxml:text (write-to-string arg
                                         :pretty t
@@ -851,7 +851,7 @@
       (cxml:attribute "kindname" (or (alias-for-function symbol) "Macro"))
       ;; Emit lambda list
       (cxml:with-element "lambda-list"
-        (dolist (arg (lambda-list (macro-function symbol)))
+        (dolist (arg (lambda-list symbol))
           (cxml:with-element "elt"
             (cxml:text (write-to-string arg
                                         :pretty t
