@@ -172,7 +172,7 @@
 ;; to simplify the lambda list of a function for the documentation.
 
 #+sbcl
-(defun lambda-list (doc)
+(defun lambda-list (symbol)
   (labels ((clean (x &key optional key)
     (typecase x
       (atom x)
@@ -195,11 +195,11 @@
         (cons (cond ((or key optional) (car x))
                     (t (clean (car x))))
               (clean (cdr x) :key key :optional optional))))))
-    (clean (sb-introspect:function-lambda-list doc))))
+    (clean (sb-introspect:function-lambda-list symbol))))
 
 #-sbcl
-(defun lambda-list (fun)
-  (swank::arglist fun))
+(defun lambda-list (symbol)
+  (swank::arglist symbol))
 
 ;;; ----------------------------------------------------------------------------
 
